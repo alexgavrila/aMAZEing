@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9068207228980183815}
   - component: {fileID: 6399480707692405639}
   - component: {fileID: 30215831960409170}
-  - component: {fileID: 2125398337474335836}
+  - component: {fileID: 9052598903519754352}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -92,7 +92,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!208 &2125398337474335836
+--- !u!208 &9052598903519754352
 NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
