@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,6 +78,32 @@ public class Player : MonoBehaviour
 		currentCell = cell;
 		Vector3 pos = cell.transform.localPosition;
 		transform.localPosition = pos;
+	}
+
+	public MazeCell GetCellBelow()
+	{
+		var downDir = -transform.up;
+
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, downDir, out hit))
+		{
+			if (hit.collider.transform.parent == null)
+			{
+				return null;
+			}
+
+			// The collider is the quad object. Get its mazeCell parent
+			GameObject mazeCell = hit.collider.transform.parent.gameObject;
+			
+			if (mazeCell.CompareTag("MazeCell"))
+			{
+				currentCell = mazeCell.GetComponent<MazeCell>();
+				
+				return currentCell;
+			}
+		}
+
+		return null;
 	}
 
 }

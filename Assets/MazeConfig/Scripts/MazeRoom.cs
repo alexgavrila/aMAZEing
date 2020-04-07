@@ -22,4 +22,9 @@ public class MazeRoom : ScriptableObject
 			Add(room.cells[i]);
 		}
 	}
+
+	public List<MazeCell> GetRoomCells()
+	{
+		return cells;
+	}
 }
