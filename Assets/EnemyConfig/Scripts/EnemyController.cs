@@ -4,49 +4,75 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(AnimatorNavigation))]
+[RequireComponent(typeof(EnemyVisibility))]
+[RequireComponent(typeof(AttackHandler))]
 public class EnemyController : MonoBehaviour
 {
-    public float rangeRadius = 10f;
+    // Interpolate between player current rotation and look rotation
     public float rotationSpd = 5f;
     
     // All enemies have the same target, the player
     private Player player;
-    private NavMeshAgent agent;
-    
-    #region PublicApi
-    
-    public EnemyController SetPlayerReference(Player playerTarget)
-    {
-        player = playerTarget;
 
-        return this;
-    }
+    private bool isDead = false;
     
+    #region ControlComponents
+    // Check if the player is in attack range using this utility
+    private EnemyVisibility visibilityCheck;
+    // The component handling this object's movement
+    private AnimatorNavigation navigation;
+    // The component handling attacking
+    private AttackHandler attack;
+    #endregion
+
+    #region PublicApi
+        public EnemyController SetPlayerReference(Player playerTarget)
+        {
+            player = playerTarget;
+            visibilityCheck.SetTargetReference(playerTarget);
+            attack.SetTarget(playerTarget);
+
+            return this;
+        }
+
+        // Stop following the player after death
+        public void OnDeath()
+        {
+            isDead = true;
+        }
     #endregion
     
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        visibilityCheck = GetComponent<EnemyVisibility>();
+        navigation = GetComponent<AnimatorNavigation>();
+        attack = GetComponent<AttackHandler>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        if (isDead)
+        {
+            return;
+        }
+        
         RotateToPlayer().FollowPlayer();
     }
 
     private EnemyController FollowPlayer()
     {
-        // Check if distance to player is within detection range
-        float distance = Vector3.Distance(transform.position, player.transform.position);
-
-        if (distance <= rangeRadius)
+        // Detection range is larger then the view range
+        // Also the player is being detected even if it is behind the enemy
+        if (visibilityCheck.IsTargetDetected)
         {
-            agent.SetDestination(player.transform.position);
-        }
+            navigation.SetDestination(player.transform.position);
 
+            // Check if the player is in attack range, i.e. we see it
+            attack.canAttack = visibilityCheck.IsTargetVisible;
+        }
+        
         return this;
     }
 
@@ -60,11 +86,5 @@ public class EnemyController : MonoBehaviour
         
         return this;
     }
-    
-    // Visual feedback in the scene
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, rangeRadius);
-    }
+
 }

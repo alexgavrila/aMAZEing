@@ -35,7 +35,7 @@ public class EnemyManager : MonoBehaviour
 
                 foreach (var cell in room.GetRoomCells())
                 {
-                    cell.GetComponentInChildren<Renderer>().material.color = Color.red;
+                    //cell.GetComponentInChildren<Renderer>().material.color = Color.red;
                 }
             } 
         }
