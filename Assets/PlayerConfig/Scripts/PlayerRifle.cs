@@ -1,12 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-[RequireComponent(typeof(CombatTarget))]
 public class PlayerRifle : MonoBehaviour
 {
     public float range = 5f;
@@ -28,6 +21,9 @@ public class PlayerRifle : MonoBehaviour
     private CombatTarget combatTargetComponent;
     // the parent camera
     private Camera mainCamera;
+
+    // Offset the shooting origin otherwise we will shoot ourselves
+    private float zShootingOffset;
     
     public void Shoot()
     {
@@ -45,15 +41,24 @@ public class PlayerRifle : MonoBehaviour
         Vector3 vectorToTarget = mainCamera.transform.forward;
         
         RaycastHit hit;
-
-        if (Physics.Raycast(mainCamera.transform.position, vectorToTarget, out hit, range))
+        var origin = mainCamera.transform.position;
+        
+        // Ignore player's layer
+        int mask = LayerMask.GetMask("Player");
+        mask = ~mask;
+        
+        if (Physics.Raycast(origin, vectorToTarget, out hit, range, mask))
         {
             // Check if a combat target has been hit
             CombatTarget targetHit = hit.collider.gameObject.GetComponentInParent<CombatTarget>();
 
             if (targetHit != null)
             {
-                targetHit.TakeDamage(combatTargetComponent.damage);
+                // Make sure we don't shoot ourselves
+                if (targetHit != combatTargetComponent)
+                {
+                    targetHit.TakeDamage(combatTargetComponent.damage);
+                }
             }
 
             // Play the flare particles on the hit target

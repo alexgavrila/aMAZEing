@@ -11,7 +11,7 @@ public class EnemyVisibility : MonoBehaviour
     public float viewAngle = 45.0f;
     // If the player gets really close to the enemy, the enemy doesn't "see" him anymore
     // This case should be treated so the enemy keeps shooting the player
-    public float deadAngleRange = 0.8f;
+    public float deadAngleRange = 1f;
     
     // If the target is detected, then it is in the detection range
     public bool IsTargetDetected { get; private set; }

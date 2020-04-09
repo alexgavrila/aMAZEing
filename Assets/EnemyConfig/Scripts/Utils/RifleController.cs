@@ -69,6 +69,19 @@ public class RifleController : MonoBehaviour
         this.transform.localEulerAngles = rot;
     }
     #endregion
+    
+    // Ranges used when interpolating shooting vector
+    // Difficulty determines how good the AI's aim is
+    #region Difficulty Ranges
+        private const float EasyStartRange = 0f;
+        private const float EasyEndRange = 0.5f;
+        
+        private const float MediumStartRange = 0.3f;
+        private const float MediumEndRange = 0.8f;
+        
+        private const float HardStartRange = 0.7f;
+        private const float HardEndRange = 1f;
+    #endregion
 
     public void Shoot(Player target)
     {
@@ -86,6 +99,31 @@ public class RifleController : MonoBehaviour
         }
     }
 
+    // Get a random lerp value for the shooting aim depending on the game difficulty
+    // the harder the difficulty the better the aim of the ai
+    private float RandomShootingLerpVal()
+    {
+        float startRange, endRange;
+        
+        switch (GameMenuUI.Instance.gameDifficulty)
+        {
+            case GameMenuUI.GameDifficulty.Hard:
+                startRange = HardStartRange;
+                endRange = HardEndRange;
+                break;
+            case GameMenuUI.GameDifficulty.Medium:
+                startRange = MediumStartRange;
+                endRange = MediumEndRange;
+                break;
+            default:
+                startRange = EasyStartRange;
+                endRange = EasyEndRange;
+                break;
+        }
+
+        return Random.Range(startRange, endRange);
+    }
+
     private IEnumerator ShootingLogic(Player target)
     {
         yield return WaitForBullet();
@@ -93,12 +131,16 @@ public class RifleController : MonoBehaviour
         // Play bullet anims
         flash.Play();
         
-        // Check if the player was shot
-        Vector3 vectorToTarget = target.transform.position - shootOrigin.transform.position;
-        
-        RaycastHit hit;
+        Vector3
+            // the exact vector to the target, no miss
+            vectorToTarget = target.transform.position - shootOrigin.transform.position,
+            // the enemy's forward direction, hits the target only when the target is straight forward
+            forwardDir = combatTargetComponent.transform.forward,
+            shootDirection = Vector3.Lerp(forwardDir, vectorToTarget, RandomShootingLerpVal());
 
-        if (Physics.Raycast(shootOrigin.position, vectorToTarget, out hit, range))
+        // Check if the player was shot
+        RaycastHit hit;
+        if (Physics.Raycast(shootOrigin.position, shootDirection, out hit, range))
         {
             // Check if a combat target has been hit
             CombatTarget targetHit = hit.collider.gameObject.GetComponent<CombatTarget>();

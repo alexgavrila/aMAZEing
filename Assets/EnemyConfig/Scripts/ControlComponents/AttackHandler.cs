@@ -15,6 +15,8 @@ public class AttackHandler : MonoBehaviour
     [SerializeField] public AttackModes attackMode = AttackModes.Ranged;
     [SerializeField] public RifleController rifle;
 
+    public PickUp coinPrefab;
+    
     // The animator of the robot child object
     private Animator anim;
     private Player playerTarget;
@@ -47,6 +49,9 @@ public class AttackHandler : MonoBehaviour
 
     public void OnDeath()
     {
+        playerTarget.OnEnemyKilled();
+        Instantiate(coinPrefab);
+        
         // Play the death animation and stop attacking
         anim.Play(PassiveAnimName);
         anim.Play(DeathAnimName);

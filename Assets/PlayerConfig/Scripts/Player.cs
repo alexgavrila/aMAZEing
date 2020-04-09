@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +10,10 @@ public class Player : MonoBehaviour
 
 	private PlayerRifle rifle;
 
+	private Camera inGameCamera;
+
+	public int PickedCoins { private set; get; } = 0;
+	public int EnemiesKilled { private set; get; } = 0;
 
 	// movement
 	public float speed = 2.0F;
@@ -21,17 +22,27 @@ public class Player : MonoBehaviour
 	// camera
     public float mouseSensitivity = 2.0f;
     float xAxisClamp = 1.0f;
+    
+    #region Constants
+		public const string CoinName = "Coin";
+    #endregion
 
 	void Start()
 	{
          _controller = GetComponent<CharacterController>();
          rifle = GetComponentInChildren<PlayerRifle>();
 
-         Cursor.lockState = CursorLockMode.Locked;
+         inGameCamera = GetComponentInChildren<Camera>();
 	}
 
 	void Update()
 	{
+		// When the game is being paused, do not update the player
+		if (GameMenuUI.IsGamePaused)
+		{
+			return;
+		}
+
 		MovePlayer();
 
 		RotateCamera();
@@ -60,7 +71,7 @@ public class Player : MonoBehaviour
 
         xAxisClamp -= rotAmountY;
 
-        Vector3 targetRotCam = Camera.main.transform.rotation.eulerAngles;
+        Vector3 targetRotCam = inGameCamera.transform.rotation.eulerAngles;
         Vector3 targetRotBody = transform.rotation.eulerAngles;
 
         targetRotCam.x -= rotAmountY;
@@ -79,7 +90,7 @@ public class Player : MonoBehaviour
         }
 
 
-        Camera.main.transform.rotation = Quaternion.Euler(targetRotCam);
+        inGameCamera.transform.rotation = Quaternion.Euler(targetRotCam);
         transform.rotation = Quaternion.Euler(targetRotBody);
     }
 
@@ -87,7 +98,22 @@ public class Player : MonoBehaviour
 	{
 		currentCell = cell;
 		Vector3 pos = cell.transform.localPosition;
+		pos.y = transform.position.y;
+		
 		transform.localPosition = pos;
+	}
+
+	public void OnPickUp(PickUp pickUpObj)
+	{
+		if (pickUpObj.pickUpName == CoinName)
+		{
+			PickedCoins += 1;
+		}
+	}
+
+	public void OnEnemyKilled()
+	{
+		EnemiesKilled++;
 	}
 
 	public void OnDeath()
