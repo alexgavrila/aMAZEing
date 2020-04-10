@@ -23,7 +23,11 @@ public class Maze : MonoBehaviour
 
 	public MazeRoomSettings[] roomSettings;
 
-	private List<MazeRoom> rooms = new List<MazeRoom>();
+	public List<MazeRoom> rooms
+	{
+		get;
+		private set;
+	} = new List<MazeRoom>();
 
 	private MazeRoom CreateRoom(int indexToExclude)
 	{
