@@ -11,36 +11,51 @@ public class EnemyController : MonoBehaviour
 {
     // Interpolate between player current rotation and look rotation
     public float rotationSpd = 5f;
-    
+
     // All enemies have the same target, the player
     private Player player;
 
     private bool isDead = false;
-    
+
     #region ControlComponents
+
     // Check if the player is in attack range using this utility
     private EnemyVisibility visibilityCheck;
+
     // The component handling this object's movement
     private AnimatorNavigation navigation;
+
     // The component handling attacking
     private AttackHandler attack;
+
     #endregion
 
     #region PublicApi
-        public EnemyController SetPlayerReference(Player playerTarget)
-        {
-            player = playerTarget;
-            visibilityCheck.SetTargetReference(playerTarget);
-            attack.SetTarget(playerTarget);
 
-            return this;
-        }
+    public EnemyController SetPlayerReference(Player playerTarget)
+    {
+        player = playerTarget;
+        visibilityCheck.SetTargetReference(playerTarget);
+        attack.SetTarget(playerTarget);
 
-        // Stop following the player after death
-        public void OnDeath()
-        {
-            isDead = true;
-        }
+        return this;
+    }
+
+    public EnemyController SetCellPosition(MazeCell cell)
+    {
+        var pos = cell.transform.position;
+        pos.y = transform.position.y;
+		
+        this.GetComponent<NavMeshAgent>().Warp(pos);
+
+        return this;
+    }
+    
+    // Stop following the player after death
+    public void OnDeath()
+    {
+        isDead = true;
+    }
     #endregion
     
     private void Awake()

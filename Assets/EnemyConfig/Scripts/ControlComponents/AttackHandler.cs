@@ -50,7 +50,14 @@ public class AttackHandler : MonoBehaviour
     public void OnDeath()
     {
         playerTarget.OnEnemyKilled();
-        Instantiate(coinPrefab);
+        
+        PickUp coin = Instantiate(coinPrefab); 
+        
+        var newPos= transform.position;
+        newPos.y = coin.transform.position.y;
+        
+        coin.transform.position = newPos;
+            
         
         // Play the death animation and stop attacking
         anim.Play(PassiveAnimName);

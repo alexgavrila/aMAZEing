@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 // Common Target component for the player and the enemies
@@ -12,7 +13,7 @@ public class CombatTarget : MonoBehaviour
     // Instead of implementing general logic, attach an event for death logic
     public UnityEvent onDeath;
 
-    private bool isDead = false;
+    public bool isDead = false;
     
     public CombatTarget TakeDamage(float damageTaken)
     {
@@ -27,6 +28,8 @@ public class CombatTarget : MonoBehaviour
                 onDeath.Invoke();
             }
         }
+
+        currHealth = Math.Max(currHealth, 0);
 
         return this;
     }

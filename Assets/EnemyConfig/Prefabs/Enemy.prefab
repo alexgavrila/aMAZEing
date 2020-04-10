@@ -211,7 +211,7 @@ MonoBehaviour:
   attackCooldownTime: 1
   attackMode: 0
   rifle: {fileID: 8114424995986412269}
-  coinPrefab: {fileID: 1286381488969750628, guid: a83d8be1c50107e41b3bfccf88dd0a70,
+  coinPrefab: {fileID: 8643387493251290736, guid: 52619803ad552484f80d1827a4822c89,
     type: 3}
 --- !u!114 &189349420894900011
 MonoBehaviour:

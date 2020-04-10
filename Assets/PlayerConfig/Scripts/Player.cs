@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
+	public UnityEvent onPlayerDeath;
+	
 	private MazeCell currentCell;
 
 	private MazeDirection currentDirection;
@@ -9,8 +12,10 @@ public class Player : MonoBehaviour
 	private CharacterController _controller;
 
 	private PlayerRifle rifle;
-
 	private Camera inGameCamera;
+	
+	private CombatTarget combatComponent;
+
 
 	public int PickedCoins { private set; get; } = 0;
 	public int EnemiesKilled { private set; get; } = 0;
@@ -32,13 +37,15 @@ public class Player : MonoBehaviour
          _controller = GetComponent<CharacterController>();
          rifle = GetComponentInChildren<PlayerRifle>();
 
+         combatComponent = GetComponent<CombatTarget>();
+
          inGameCamera = GetComponentInChildren<Camera>();
 	}
 
 	void Update()
 	{
 		// When the game is being paused, do not update the player
-		if (GameMenuUI.IsGamePaused)
+		if (GameMenuUI.IsGamePaused || combatComponent.isDead)
 		{
 			return;
 		}
@@ -114,11 +121,16 @@ public class Player : MonoBehaviour
 	public void OnEnemyKilled()
 	{
 		EnemiesKilled++;
+
+		if (EnemiesKilled >= LevelParams.enemiesToKill)
+		{
+			print("Killed all enemies for this level");
+		}
 	}
 
 	public void OnDeath()
 	{
-		print("Player died");
+		onPlayerDeath.Invoke();
 	}
 
 	public MazeCell GetCellBelow()
@@ -145,6 +157,15 @@ public class Player : MonoBehaviour
 		}
 
 		return null;
+	}
+
+	public void Restore()
+	{
+		combatComponent.currHealth = combatComponent.maxHealth;
+		combatComponent.isDead = false;
+		
+		EnemiesKilled = 0;
+		PickedCoins = 0;
 	}
 
 }

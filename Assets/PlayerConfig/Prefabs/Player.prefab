@@ -128,6 +128,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35876c7026d88504881e39ca953de09c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onPlayerDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6561339827419697177}
+        m_MethodName: OnGameOverPanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   speed: 2
   mouseSensitivity: 2
 --- !u!114 &4914852829380932589
@@ -159,6 +173,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  isDead: 0
 --- !u!114 &6561339827419697177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +187,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inGameUICanvas: {fileID: 4626820799344043772}
+  gameOverPanel: {fileID: 987768736065099178}
+  inGamePanel: {fileID: 1012392916070974658}
   healthText: {fileID: 4626820798963571565}
   coinsText: {fileID: 5246866173631544908}
   enemiesKilledText: {fileID: 7871148742763322142}
@@ -179,6 +196,7 @@ MonoBehaviour:
   healthTextAppend: 'Health: '
   coinsTextAppend: 'Picked Coins: '
   enemiesTextAppend: 'Enemies Killed: '
+  flashMessageTime: 1
 --- !u!1 &9053537606853560303
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,6 +442,36 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 4761221321335606934, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761221321335606934, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761221321335606934, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761221321335606934, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6561339827419697177}
+    - target: {fileID: 4761221321335606934, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnGameRestart
+      objectReference: {fileID: 0}
+    - target: {fileID: 4761221321335606934, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60, type: 3}
 --- !u!224 &4626820799344043773 stripped
@@ -438,6 +486,24 @@ Canvas:
     type: 3}
   m_PrefabInstance: {fileID: 4722832033528752699}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1012392916070974658 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5730376738842177273, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+    type: 3}
+  m_PrefabInstance: {fileID: 4722832033528752699}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8986548142497193088 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4412541759476528827, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+    type: 3}
+  m_PrefabInstance: {fileID: 4722832033528752699}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4626820798963571565 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 125849785466745174, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
@@ -474,18 +540,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8986548142497193088 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4412541759476528827, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
+--- !u!1 &987768736065099178 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5494282524713861009, guid: 672f7c6dd47a7fa4c8f26732cc7bbe60,
     type: 3}
   m_PrefabInstance: {fileID: 4722832033528752699}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &8435229938586530780
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -497,6 +557,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4503763406899350739, guid: 054f30b387cd1c04884b424049f3ecca,
+        type: 3}
+      propertyPath: rifleDamage
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7610642963524344183, guid: 054f30b387cd1c04884b424049f3ecca,
         type: 3}

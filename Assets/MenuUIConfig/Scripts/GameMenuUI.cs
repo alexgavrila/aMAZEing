@@ -83,6 +83,11 @@ public class GameMenuUI : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (GameManager.instance.isGameOver)
+        {
+            return;
+        }
+        
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             IsGamePaused = !IsGamePaused;

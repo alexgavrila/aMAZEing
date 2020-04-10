@@ -59,4 +59,18 @@ public class MazeCell : MonoBehaviour
             throw new System.InvalidOperationException("MazeCell has no uninitialized directions left.");
         }
     }
+
+    // Whether this cell is free of walls and doors
+    public bool IsEmptyCell()
+    {
+        foreach (var edge in edges)
+        {
+            if (!(edge.GetType() == typeof(MazePassage)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

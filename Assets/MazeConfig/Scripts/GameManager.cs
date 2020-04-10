@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
@@ -7,12 +6,17 @@ public class GameManager : MonoBehaviour
 	#region Singleton
 		public static GameManager instance;
 	#endregion
-	
+
 	// The nav mesh object to bake at runtime
 	public NavMeshSurface navMesh;
 	
 	public Maze mazePrefab;
-	private Maze mazeInstance;
+
+	public Maze mazeInstance
+	{
+		get;
+		private set;
+	}
 
 	public Player playerPrefab;
 
@@ -23,11 +27,15 @@ public class GameManager : MonoBehaviour
 	}
 
 	public EnemyManager enemyManagerPrefab;
-	private EnemyManager enemyManager;
+	public EnemyManager enemyManager;
 
 	// Keep a reference to the menu prefab
 	public GameMenuUI menuObject;
 	private GameMenuUI menuObjectInstance;
+
+	// Game over means the player has been killed
+	// The death menu is shown
+	public bool isGameOver = false;
 
 	private void Awake()
 	{
@@ -59,7 +67,7 @@ public class GameManager : MonoBehaviour
 	private void BeginGame()
 	{
 		GenerateWorld();
-		
+
 		PlayerInstance = Instantiate(playerPrefab) as Player;
 		PlayerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
 
@@ -68,17 +76,25 @@ public class GameManager : MonoBehaviour
 
 		// Send the player reference to the enemy manager
 		enemyManager = Instantiate(enemyManagerPrefab)
-			.Init(PlayerInstance);
+			.Init(PlayerInstance)
+			.ResetSpawnPoints();
 
 		//StartCoroutine(mazeInstance.Generate());
 	}
 	
 	// Regenerate the world and set the player's new location
-	private void RestartGame()
+	public void RestartGame(bool generateNewWorld = true)
 	{
 		//StopAllCoroutines();
-		Destroy(mazeInstance.gameObject);
-		
+
+		// Generate a new world and choose other spawn points
+		if (generateNewWorld)
+		{
+			Destroy(mazeInstance.gameObject);
+			GenerateWorld();
+			enemyManager.ResetSpawnPoints();
+		}
+
 		/*if (playerInstance != null)
 		{
 			Destroy(playerInstance.gameObject);
@@ -90,7 +106,6 @@ public class GameManager : MonoBehaviour
 		}
 		*/
 		
-		GenerateWorld();
 		PlayerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
 	}
 }

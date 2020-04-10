@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(CombatTarget))]
 public class InGameUIController : MonoBehaviour
 {
     public Canvas inGameUICanvas;
+
+    public GameObject gameOverPanel;
+    public GameObject inGamePanel; 
     
     // Display the health, coins and enemies killed
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI coinsText;
     public TextMeshProUGUI enemiesKilledText;
+    // Flash a message on the screen then it slowly fades out and disappears
     public TextMeshProUGUI flashMessage;
-    
+
     public string healthTextAppend = "Health: ";
     public string coinsTextAppend = "Picked Coins: ";
     public string enemiesTextAppend = "Enemies Killed: ";
@@ -27,8 +32,44 @@ public class InGameUIController : MonoBehaviour
 
     private Coroutine fadeOutCoroutine;
 
+    public void OnGameOverPanel()
+    {
+        GameManager.instance.isGameOver = true;
+            
+        gameOverPanel.SetActive(true);
+        inGamePanel.SetActive(false);
+            
+        Time.timeScale = 0;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void OnGameRestart()
+    {
+        GameManager.instance.isGameOver = false;
+        
+        gameOverPanel.SetActive(false);
+        inGamePanel.SetActive(true);
+
+        GameManager.instance.enemyManager.DespawnEnemies();
+        
+        GameManager.instance.RestartGame();
+        GameManager.instance.PlayerInstance.Restore();
+        
+        Time.timeScale = 1f;
+        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    
     public void FlashMessage(string message)
     {
+        if (GameMenuUI.IsGamePaused)
+        {
+            return;
+        }
+
         flashMessage.text = message;
         SetFadeMessageAlpha(1);
 
@@ -65,6 +106,8 @@ public class InGameUIController : MonoBehaviour
         player = GetComponent<Player>();
         
         SetFadeMessageAlpha(0);
+        
+        gameOverPanel.SetActive(false);
     }
 
     // Update is called once per frame
@@ -85,6 +128,6 @@ public class InGameUIController : MonoBehaviour
     {
         healthText.text = healthTextAppend + stats.currHealth + " / " + stats.maxHealth;
         coinsText.text = coinsTextAppend + player.PickedCoins;
-        enemiesKilledText.text = enemiesTextAppend + player.EnemiesKilled;
+        enemiesKilledText.text = enemiesTextAppend + player.EnemiesKilled + " / " + LevelParams.enemiesToKill;
     }
 }

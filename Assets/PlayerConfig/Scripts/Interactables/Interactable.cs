@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -33,11 +34,19 @@ public class Interactable : MonoBehaviour
 
     private void CheckIfInteractable()
     {
+        player = GameManager.instance.PlayerInstance;
+
         if (player == null)
         {
-            player = GameManager.instance.PlayerInstance;
-            playerCamera = player.GetComponentInChildren<Camera>();
-            inGameUi = player.GetComponent<InGameUIController>();
+            return;
+        }
+        
+        playerCamera = player.GetComponentInChildren<Camera>();
+        inGameUi = player.GetComponent<InGameUIController>();
+
+        if (playerCamera == null || inGameUi == null)
+        {
+            return;
         }
 
         var cameraDir = playerCamera.transform.forward;
