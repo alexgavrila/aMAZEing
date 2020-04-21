@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
 	// The nav mesh object to bake at runtime
 	public NavMeshSurface navMesh;
-	
+
 	public Maze mazePrefab;
 
 	public Maze mazeInstance
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
 	{
 		instance = this;
 	}
-	
+
 	private void Start()
 	{
 		BeginGame();
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
 	{
 		mazeInstance = Instantiate(mazePrefab) as Maze;
 		mazeInstance.Generate();
-		
+
 		navMesh.BuildNavMesh();
 	}
 
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
 
 		//StartCoroutine(mazeInstance.Generate());
 	}
-	
+
 	// Regenerate the world and set the player's new location
 	public void RestartGame(bool generateNewWorld = true)
 	{
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
 			Destroy(enemyManager.gameObject);
 		}
 		*/
-		
+
 		PlayerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
 	}
 }

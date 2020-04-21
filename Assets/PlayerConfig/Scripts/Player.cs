@@ -4,7 +4,11 @@ using UnityEngine.Events;
 public class Player : MonoBehaviour
 {
 	public UnityEvent onPlayerDeath;
-	
+
+	public GameManager _manager;
+
+	public Teleporter teleporterPrefab;
+
 	private MazeCell currentCell;
 
 	private MazeDirection currentDirection;
@@ -13,7 +17,7 @@ public class Player : MonoBehaviour
 
 	private PlayerRifle rifle;
 	private Camera inGameCamera;
-	
+
 	private CombatTarget combatComponent;
 
 
@@ -27,7 +31,7 @@ public class Player : MonoBehaviour
 	// camera
     public float mouseSensitivity = 2.0f;
     float xAxisClamp = 1.0f;
-    
+
     #region Constants
 		public const string CoinName = "Coin";
     #endregion
@@ -106,7 +110,7 @@ public class Player : MonoBehaviour
 		currentCell = cell;
 		Vector3 pos = cell.transform.localPosition;
 		pos.y = transform.position.y;
-		
+
 		transform.localPosition = pos;
 	}
 
@@ -125,6 +129,15 @@ public class Player : MonoBehaviour
 		if (EnemiesKilled >= LevelParams.enemiesToKill)
 		{
 			print("Killed all enemies for this level");
+
+			MazeCell playerCell = GetCellBelow();
+			MazeCell emptyCellInRoom = null;
+			do
+			{
+				emptyCellInRoom = GameManager.instance.mazeInstance.GetRandomEmptyCell();
+			} while (playerCell == emptyCellInRoom);
+
+			Instantiate(teleporterPrefab).SetCellPosition(emptyCellInRoom);
 		}
 	}
 
@@ -147,11 +160,11 @@ public class Player : MonoBehaviour
 
 			// The collider is the quad object. Get its mazeCell parent
 			GameObject mazeCell = hit.collider.transform.parent.gameObject;
-			
+
 			if (mazeCell.CompareTag("MazeCell"))
 			{
 				currentCell = mazeCell.GetComponent<MazeCell>();
-				
+
 				return currentCell;
 			}
 		}
@@ -163,9 +176,20 @@ public class Player : MonoBehaviour
 	{
 		combatComponent.currHealth = combatComponent.maxHealth;
 		combatComponent.isDead = false;
-		
+
+		ResetEnemiesKilled();
+		ResetPickedCoins();
+	}
+
+	public void ResetEnemiesKilled()
+	{
 		EnemiesKilled = 0;
+	}
+
+	public void ResetPickedCoins()
+	{
 		PickedCoins = 0;
 	}
+
 
 }

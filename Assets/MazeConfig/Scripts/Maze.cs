@@ -48,6 +48,8 @@ public class Maze : MonoBehaviour
 		return cells[coordinates.x, coordinates.z];
 	}
 
+
+
 	public void Generate()
 	{
 		//WaitForSeconds delay = new WaitForSeconds(generationStepDelay);
@@ -59,10 +61,12 @@ public class Maze : MonoBehaviour
 			//yield return delay;
 			DoNextGenerationStep(activeCells);
 		}
+
+		GetCell(RandomCoordinates);
 	}
 
 
-	
+
 
 
 	private void DoFirstGenerationStep(List<MazeCell> activeCells)
@@ -168,6 +172,25 @@ public class Maze : MonoBehaviour
 		}
 	}
 
+
+	public MazeCell GetRandomEmptyCell()
+	{
+		int noOfTries = cells.Length * 3;
+
+		MazeCell randomCell = null;
+		for (var tries = 0; tries < noOfTries; tries++)
+		{
+			randomCell = GetCell(RandomCoordinates);
+
+			if (randomCell.IsEmptyCell())
+			{
+				return randomCell;
+			}
+		}
+
+		return randomCell;
+	}
+
 	public bool ContainsCoordinates(IntVector2 coordinate)
 	{
 		return coordinate.x >= 0 && coordinate.x < size.x && coordinate.z >= 0 && coordinate.z < size.z;
@@ -188,5 +211,5 @@ public class Maze : MonoBehaviour
 	}
 
 
-	
+
 }
