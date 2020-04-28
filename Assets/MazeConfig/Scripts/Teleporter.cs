@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.UI;
+
 public class Teleporter : MonoBehaviour
 {
+
+    public Animator anim;
+    public Image black;
+
     public void SetCellPosition(MazeCell cell)
     {
         var pos = cell.transform.position;
@@ -17,9 +23,15 @@ public class Teleporter : MonoBehaviour
     {
         if(o.gameObject.tag == "Player")
         {
-            GameManager.instance.RestartGame();
+
             o.GetComponent<Player>().ResetEnemiesKilled();
+
             Destroy(gameObject);
+
+            GameManager.instance.RestartGame();
+
+            GameManager.instance.currentFloor++;
         }
     }
+
 }

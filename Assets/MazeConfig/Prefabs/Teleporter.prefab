@@ -756,6 +756,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a47e4c220557f504f987d00487242354, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 7652884056248186096, guid: 56b6fbdd7acc2e84b96f87c6c276503d, type: 3}
+  black: {fileID: 7120886509410798905, guid: 56b6fbdd7acc2e84b96f87c6c276503d, type: 3}
 --- !u!65 &7721178827236679127
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,101 +1,108 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
-	#region Singleton
-		public static GameManager instance;
-	#endregion
+    #region Singleton
+    public static GameManager instance;
+    #endregion
 
-	// The nav mesh object to bake at runtime
-	public NavMeshSurface navMesh;
+    // The nav mesh object to bake at runtime
+    public NavMeshSurface navMesh;
 
-	public Maze mazePrefab;
+    public Maze mazePrefab;
 
-	public Maze mazeInstance
-	{
-		get;
-		private set;
-	}
+    public Maze mazeInstance
+    {
+        get;
+        private set;
+    }
 
-	public Player playerPrefab;
 
-	public Player PlayerInstance
-	{
-		private set;
-		get;
-	}
+    public Player playerPrefab;
 
-	public EnemyManager enemyManagerPrefab;
-	public EnemyManager enemyManager;
+    public Player PlayerInstance
+    {
+        private set;
+        get;
+    }
 
-	// Keep a reference to the menu prefab
-	public GameMenuUI menuObject;
-	private GameMenuUI menuObjectInstance;
+    public EnemyManager enemyManagerPrefab;
+    public EnemyManager enemyManager;
 
-	// Game over means the player has been killed
-	// The death menu is shown
-	public bool isGameOver = false;
+    // Keep a reference to the menu prefab
+    public GameMenuUI menuObject;
+    private GameMenuUI menuObjectInstance;
 
-	private void Awake()
-	{
-		instance = this;
-	}
+    public int currentFloor;
 
-	private void Start()
-	{
-		BeginGame();
-	}
+    public Save save;
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.CapsLock))
-		{
-			RestartGame();
-		}
-	}
+    // Game over means the player has been killed
+    // The death menu is shown
+    public bool isGameOver = false;
 
-	// Generate a new maze and compute the nav mesh agents' paths
-	private void GenerateWorld()
-	{
-		mazeInstance = Instantiate(mazePrefab) as Maze;
-		mazeInstance.Generate();
+    private void Awake()
+    {
+        instance = this;
+		LoadGame();
+    }
 
-		navMesh.BuildNavMesh();
-	}
+    private void Start()
+    {
+        BeginGame();
+    }
 
-	private void BeginGame()
-	{
-		GenerateWorld();
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.CapsLock))
+        {
+            RestartGame();
+        }
+    }
 
-		PlayerInstance = Instantiate(playerPrefab) as Player;
-		PlayerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
+    // Generate a new maze and compute the nav mesh agents' paths
+    private void GenerateWorld()
+    {
+        mazeInstance = Instantiate(mazePrefab) as Maze;
+        mazeInstance.Generate();
 
-		menuObjectInstance = Instantiate(menuObject)
-			.SetPlayer(PlayerInstance);
+        navMesh.BuildNavMesh();
+    }
 
-		// Send the player reference to the enemy manager
-		enemyManager = Instantiate(enemyManagerPrefab)
-			.Init(PlayerInstance)
-			.ResetSpawnPoints();
+    private void BeginGame()
+    {
+        GenerateWorld();
 
-		//StartCoroutine(mazeInstance.Generate());
-	}
+        PlayerInstance = Instantiate(playerPrefab) as Player;
+        PlayerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
 
-	// Regenerate the world and set the player's new location
-	public void RestartGame(bool generateNewWorld = true)
-	{
-		//StopAllCoroutines();
+        menuObjectInstance = Instantiate(menuObject)
+            .SetPlayer(PlayerInstance);
 
-		// Generate a new world and choose other spawn points
-		if (generateNewWorld)
-		{
-			Destroy(mazeInstance.gameObject);
-			GenerateWorld();
-			enemyManager.ResetSpawnPoints();
-		}
+        // Send the player reference to the enemy manager
+        enemyManager = Instantiate(enemyManagerPrefab)
+            .Init(PlayerInstance)
+            .ResetSpawnPoints();
 
-		/*if (playerInstance != null)
+        //StartCoroutine(mazeInstance.Generate());
+    }
+
+    // Regenerate the world and set the player's new location
+    public void RestartGame(bool generateNewWorld = true)
+    {
+        //StopAllCoroutines();
+
+        // Generate a new world and choose other spawn points
+        if (generateNewWorld)
+        {
+            Destroy(mazeInstance.gameObject);
+            GenerateWorld();
+            enemyManager.ResetSpawnPoints();
+        }
+
+        /*if (playerInstance != null)
 		{
 			Destroy(playerInstance.gameObject);
 		}
@@ -106,6 +113,35 @@ public class GameManager : MonoBehaviour
 		}
 		*/
 
-		PlayerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
-	}
+        PlayerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
+    }
+
+    public void SaveGame(string name)
+    {
+		Save newSave = new Save();
+
+		newSave.level = currentFloor;
+		newSave.name = name;
+
+		save = newSave;
+
+        string json = JsonUtility.ToJson(newSave);
+		File.WriteAllText(Application.persistentDataPath + "/gamesave.save", json);
+    }
+
+    public void LoadGame()
+    {
+        if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
+        {
+			string json = File.ReadAllText(Application.persistentDataPath + "/gamesave.save");
+			save = JsonUtility.FromJson<Save>(json);
+
+        }
+        else
+        {
+			save = new Save();
+			save.level = 0;
+			save.name = "-";
+        }
+    }
 }

@@ -9,14 +9,14 @@ public class PlayerRifle : MonoBehaviour
 
     private float timeBetweenShots;
     private float lastShotTime = 0f;
-    
+
     // Shooting particles
     public ParticleSystem flash;
     public GameObject hitFlare;
-    
+
     // Time before the impact flare gets removed
     public float flareLifetime = 0.5f;
-    
+
     // the CombatTarget component on the parent Player container
     private CombatTarget combatTargetComponent;
     // the parent camera
@@ -24,29 +24,34 @@ public class PlayerRifle : MonoBehaviour
 
     // Offset the shooting origin otherwise we will shoot ourselves
     private float zShootingOffset;
-    
+
+    private AudioSource gunFire;
+
     public void Shoot()
     {
         if (Time.time - lastShotTime < timeBetweenShots)
         {
             return;
         }
-        
+
         lastShotTime = Time.time;
-        
+
         // Play bullet anims
         flash.Play();
-        
+
+        // play gunfier sound
+        gunFire.Play();
+
         // Check the hit target
         Vector3 vectorToTarget = mainCamera.transform.forward;
-        
+
         RaycastHit hit;
         var origin = mainCamera.transform.position;
-        
+
         // Ignore player's layer
         int mask = LayerMask.GetMask("Player");
         mask = ~mask;
-        
+
         if (Physics.Raycast(origin, vectorToTarget, out hit, range, mask))
         {
             // Check if a combat target has been hit
@@ -73,9 +78,9 @@ public class PlayerRifle : MonoBehaviour
     {
         combatTargetComponent = GetComponentInParent<CombatTarget>();
         mainCamera = GetComponentInParent<Camera>();
-        
+        gunFire = GetComponent<AudioSource>();
         timeBetweenShots = 1f / fireRate;
-        
+
         // override combatTarget component's damage
         combatTargetComponent.damage = rifleDamage;
     }
