@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 using UnityScript.Steps;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameMenuUI : MonoBehaviour
 {
     public static bool IsGamePaused = true;
     private static bool LastGameState = false;
-    
+
     #region Singleton
         private static GameMenuUI _instance;
         public static GameMenuUI Instance
@@ -26,7 +28,7 @@ public class GameMenuUI : MonoBehaviour
             }
         }
     #endregion
-    
+
     #region Game Difficulty
         public enum GameDifficulty {
             Easy = 0,
@@ -44,10 +46,14 @@ public class GameMenuUI : MonoBehaviour
     }
 
     private Player player;
-    
+
     // Keep the in game camera so we can deactivate it
     private Camera playerCamera;
     private Camera menuCamera;
+
+    public TextMeshProUGUI highestScore;
+    public string highestScoreTextAppend = "HIGHEST SCORE: ";
+
 
     public GameMenuUI SetPlayer(Player playerRef)
     {
@@ -55,12 +61,18 @@ public class GameMenuUI : MonoBehaviour
         playerCamera = inGameCamera;
 
         player = playerRef;
-        
+
         return this;
     }
 
     public void ResumeGame()
     {
+        IsGamePaused = false;
+    }
+
+    public void RestartGame()
+    {
+        GameManager.instance.RestartGame();
         IsGamePaused = false;
     }
 
@@ -73,11 +85,13 @@ public class GameMenuUI : MonoBehaviour
     {
         Instance = this;
     }
-    
+
     // Start is called before the first frame update
     private void Start()
     {
         menuCamera = GetComponentInChildren<Camera>();
+        menuCamera = GetComponentInChildren<Camera>();
+        highestScore.text ="pouj;ljk";
     }
 
     // Update is called once per frame
@@ -87,7 +101,7 @@ public class GameMenuUI : MonoBehaviour
         {
             return;
         }
-        
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             IsGamePaused = !IsGamePaused;
@@ -96,12 +110,15 @@ public class GameMenuUI : MonoBehaviour
         if (LastGameState != IsGamePaused)
         {
             LastGameState = IsGamePaused;
-            
+
             HandleCameras();
             HandleCursor();
 
             HandleGamePausedState();
         }
+
+        highestScore.text = highestScoreTextAppend + GameManager.instance.save.name + " / " + GameManager.instance.save.level;
+
     }
 
     // Pause the game and hide the player
@@ -126,7 +143,7 @@ public class GameMenuUI : MonoBehaviour
         {
             // Deactivate the in game camera
             playerCamera.gameObject.SetActive(false);
-            
+
             // Activate the menu camera
             menuCamera.gameObject.SetActive(true);
         }
