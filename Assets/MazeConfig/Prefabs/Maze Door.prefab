@@ -425,6 +425,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hinge
       objectReference: {fileID: 0}
+    - target: {fileID: 3045495151766853665, guid: 3fb34f10528b56341bca7612c50fe446,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cdb0284aa2b603d449ff2e2472df6e76, type: 2}
+    - target: {fileID: 3045495151956604879, guid: 3fb34f10528b56341bca7612c50fe446,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3c31f864a2c04b64384f3e5efd2d35cc, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3fb34f10528b56341bca7612c50fe446, type: 3}
 --- !u!4 &4454024608435369232 stripped

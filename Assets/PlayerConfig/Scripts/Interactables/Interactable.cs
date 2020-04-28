@@ -17,10 +17,10 @@ public class Interactable : MonoBehaviour
     // The in-game ui used to display a message to the screen
     // i.e. "Press E to interact"
     private InGameUIController inGameUi;
-    
+
     // When it was interactable but it isn't anymore invoke event
     private bool isInteractable = false;
-    
+
     // Update is called once per frame
     private void Update()
     {
@@ -40,7 +40,7 @@ public class Interactable : MonoBehaviour
         {
             return;
         }
-        
+
         playerCamera = player.GetComponentInChildren<Camera>();
         inGameUi = player.GetComponent<InGameUIController>();
 
@@ -55,7 +55,7 @@ public class Interactable : MonoBehaviour
         {
             // Ignore player layer
             var mask = ~LayerMask.GetMask("Player");
-            
+
             RaycastHit hit;
             if (Physics.Raycast(playerCamera.transform.position, cameraDir, out hit, interactionRange, mask))
             {
@@ -63,9 +63,9 @@ public class Interactable : MonoBehaviour
                 if (hit.collider.transform == transform)
                 {
                     isInteractable = true;
-                    
+
                     inGameUi.FlashMessage(interactionMessage);
-                } 
+                }
                 // check if became non interactable
                 else
                 {
