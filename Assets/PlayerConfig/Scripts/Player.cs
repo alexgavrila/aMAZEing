@@ -141,7 +141,7 @@ public class Player : MonoBehaviour
     {
         EnemiesKilled++;
 
-        if (EnemiesKilled >= LevelParams.enemiesToKill)
+        if (EnemiesKilled == LevelParams.enemiesToKill)
         {
             print("Killed all enemies for this level");
 
