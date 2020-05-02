@@ -70,6 +70,11 @@ public class GameMenuUI : MonoBehaviour
         IsGamePaused = false;
     }
 
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     public void RestartGame()
     {
         GameManager.instance.RestartGame();

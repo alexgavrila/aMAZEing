@@ -94,6 +94,7 @@ public class EnemyVisibility : MonoBehaviour
     }
 }
 
+/*
 // Code taken from the Unity Game Development Cookbook chapter 10 for editing the visible range.
 [CustomEditor(typeof(EnemyVisibility))]
 public class EnemyVisibilityEditor : Editor {
@@ -160,3 +161,4 @@ public class EnemyVisibilityEditor : Editor {
                                             // held down
     }
 }
+*/
